@@ -13,12 +13,25 @@
         button { width: 100%; padding: 12px; background: #1877f2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
         button:hover { background: #1565c0; }
         .post { background: white; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; } /* Image CSS */
-        .post-user { font-weight: bold; color: #1877f2; font-size: 18px; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; }
+        .post-user { font-weight: bold; color: #1877f2; font-size: 18px; display: flex; justify-content: space-between; align-items: center;}
         .post-content { margin: 10px 0; font-size: 16px; color: #1c1e21; }
         .post-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-        .like-btn { background: #f0f2f5; color: #65676b; width: auto; padding: 5px 15px; font-size: 14px; }
-        .like-btn.liked { color: #1877f2; }
+        .like-btn { background: #f0f2f5; color: #65676b; width: auto; padding: 5px 15px; font-size: 14px; margin: 0; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background: none; border: none; font-size: 20px; color: #65676b; cursor: pointer; padding: 0 5px; width: auto; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: white; min-width: 120px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 8px; overflow: hidden; }
+        .dropdown-content button { background: white; color: black; padding: 12px; text-align: left; border-radius: 0; font-weight: normal; font-size: 14px; }
+        .show { display: block; }
+        .privacy-badge { font-size: 11px; background: #e4e6eb; color: #65676b; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: normal;}
+        
+        /* Comments CSS */
+        .comments-section { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
+        .comment-item { margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .comment-input-area { display: flex; gap: 5px; margin-top: 10px; }
+        .comment-input-area input { margin: 0; padding: 8px; font-size: 14px; }
+        .comment-input-area button { width: auto; padding: 8px 15px; margin: 0; font-size: 14px; }
+        
         #post-area { display: none; }
     </style>
 </head>
@@ -67,43 +80,29 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
-            const res = await fetch(`${API_URL}/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
-            });
-            const data = await res.json();
-            alert(data.message || data.error);
-            if(res.ok) location.reload();
+            const res = await fetch(`${API_URL}/signup`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password }) });
+            if(res.ok) location.reload(); else alert("Error!");
         }
 
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
-            const res = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
             const data = await res.json();
             if(res.ok) {
                 currentUser = data.user;
                 document.getElementById('auth-area').style.display = 'none';
                 document.getElementById('post-area').style.display = 'block';
                 document.getElementById('display-name').innerText = currentUser.name;
+                loadPosts(); 
             } else { alert(data.error); }
         }
 
         async function createPost() {
             const content = document.getElementById('content').value;
-            const imageUrl = document.getElementById('img-url').value; // Naya!
-            if(!content && !imageUrl) return alert("Bhai, kuch toh likh ya photo daal!");
-            
-            await fetch(`${API_URL}/create-post`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser.name, content, imageUrl })
-            });
+            const imageUrl = document.getElementById('img-url').value;
+            if(!content && !imageUrl) return;
+            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.name, content, imageUrl }) });
             document.getElementById('content').value = '';
             document.getElementById('img-url').value = '';
             loadPosts();
@@ -114,23 +113,68 @@
             loadPosts(); 
         }
 
+        // NAYA: Comment Add karne ka function
+        async function addComment(id) {
+            const text = document.getElementById(`cmt-${id}`).value;
+            if(!text) return;
+            await fetch(`${API_URL}/comment/${id}`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ username: currentUser.name, text: text }) 
+            });
+            loadPosts();
+        }
+
+        function toggleMenu(id) { document.getElementById("menu-" + id).classList.toggle("show"); }
+        window.onclick = function(e) { if (!e.target.matches('.dropbtn')) { document.querySelectorAll(".dropdown-content").forEach(d => d.classList.remove('show')); } }
+
+        async function editPost(id) {
+            let newContent = prompt("Post update karein:");
+            if(newContent) { await fetch(`${API_URL}/edit-post/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newContent }) }); loadPosts(); }
+        }
+        async function togglePrivacy(id) { await fetch(`${API_URL}/privacy-post/${id}`, { method: 'PUT' }); loadPosts(); }
+        async function deletePost(id) { if(confirm("Delete?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); loadPosts(); } }
+
         async function loadPosts() {
             const res = await fetch(`${API_URL}/posts`);
             const posts = await res.json();
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
             posts.forEach(p => {
-                // Agar photo link hai toh dikhao, nahi toh hide rakho
                 const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" style="display:block;">` : '';
                 
+                let menuHtml = '';
+                if(currentUser && p.username === currentUser.name) {
+                    menuHtml = `
+                    <div class="dropdown"><button onclick="toggleMenu('${p._id}')" class="dropbtn">⋮</button>
+                        <div id="menu-${p._id}" class="dropdown-content">
+                            <button onclick="editPost('${p._id}')">✏️ Edit</button>
+                            <button onclick="togglePrivacy('${p._id}')">🔒 ${p.privacy === 'Public' ? 'Private' : 'Public'}</button>
+                            <button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete</button>
+                        </div>
+                    </div>`;
+                }
+
+                // Comments Render HTML
+                let commentsHtml = p.comments.map(c => `<div class="comment-item"><b>${c.username}:</b> ${c.text}</div>`).join('');
+                let commentInputHtml = currentUser ? `
+                    <div class="comment-input-area">
+                        <input type="text" id="cmt-${p._id}" placeholder="Write a comment...">
+                        <button onclick="addComment('${p._id}')">Send</button>
+                    </div>` : '';
+
                 feed.innerHTML += `
                     <div class="post">
-                        <span class="post-user">${p.username}</span>
+                        <div class="post-user"><div>${p.username} <span class="privacy-badge">${p.privacy || 'Public'}</span></div>${menuHtml}</div>
                         <div class="post-content">${p.content}</div>
                         ${imgTag} 
                         <div class="post-footer">
                             <span style="color:#777; font-size:12px;">${new Date(p.createdAt).toLocaleString()}</span>
-                            <button class="like-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0} Likes</button>
+                            <button class="like-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0}</button>
+                        </div>
+                        <div class="comments-section">
+                            ${commentsHtml}
+                            ${commentInputHtml}
                         </div>
                     </div>`;
             });
