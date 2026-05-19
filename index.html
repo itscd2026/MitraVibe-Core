@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitra Vibe - Connect with Friends</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; max-width: 400px; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #1877f2; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .post { background: white; padding: 15px; border-radius: 8px; margin-top: 10px; width: 100%; max-width: 400px; border-bottom: 1px solid #ddd; }
+        h2 { color: #1877f2; }
+    </style>
+</head>
+<body>
+
+    <h2>Mitra Vibe 🚀</h2>
+
+    <div class="card">
+        <h3>Signup</h3>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="pass" placeholder="Password">
+        <button onclick="signup()">Join Mitra Vibe</button>
+    </div>
+
+    <div class="card">
+        <h3>Share Something</h3>
+        <input type="text" id="user" placeholder="Your Name">
+        <textarea id="content" placeholder="What's on your mind?"></textarea>
+        <button onclick="createPost()">Post Now</button>
+    </div>
+
+    <div id="feed"></div>
+
+    <script>
+        const API_URL = "https://mitravibe-core.onrender.com";
+
+        async function signup() {
+            const data = { 
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('pass').value
+            };
+            const res = await fetch(`${API_URL}/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            alert(result.message || result.error);
+        }
+
+        async function createPost() {
+            const data = { 
+                username: document.getElementById('user').value,
+                content: document.getElementById('content').value
+            };
+            await fetch(`${API_URL}/create-post`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            location.reload(); // Post karne ke baad page refresh
+        }
+
+        async function loadPosts() {
+            const res = await fetch(`${API_URL}/posts`);
+            const posts = await res.json();
+            const feed = document.getElementById('feed');
+            posts.forEach(p => {
+                feed.innerHTML += `<div class="post"><b>${p.username}</b><p>${p.content}</p><small>${new Date(p.createdAt).toLocaleString()}</small></div>`;
+            });
+        }
+        loadPosts();
+    </script>
+</body>
+</html>
