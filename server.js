@@ -5,29 +5,34 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors());
-// Feature 10: Badi photos (Base64) allow karne ke liye limit badhayi
-app.use(bodyParser.json({limit: '10mb'})); 
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
+app.use(bodyParser.json({limit: '15mb'})); 
+app.use(bodyParser.urlencoded({limit: '15mb', extended: true}));
 
 const mongoURI = "mongodb+srv://Mitraadmin:Its%40%408989@cluster0.rbq11om.mongodb.net/MitraVibeDB?retryWrites=true&w=majority&tls=true";
 mongoose.connect(mongoURI).then(() => console.log("✅ DB Connected!"));
 
+// Feature 1, 10: Cover Pic aur Network stats
 const User = mongoose.model('User', { 
     name: String, email: { type: String, unique: true }, password: String,
     profilePic: { type: String, default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' },
+    coverPic: { type: String, default: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800' },
     bio: { type: String, default: 'Mitra Vibe User 🚀' },
-    website: { type: String, default: '' }, // Feature 4
-    savedPosts: [String] // Feature 8
+    website: { type: String, default: '' }, 
+    savedPosts: [String],
+    followers: { type: Number, default: 0 },
+    following: { type: Number, default: 0 }
 });
 
+// Feature 3: Post Views Tracker
 const Post = mongoose.model('Post', { 
-    username: String, userDp: String, content: String, imageUrl: String, // imageUrl ab direct photo data store karega
+    username: String, userDp: String, content: String, imageUrl: String, 
     privacy: { type: String, default: 'Public' }, likes: { type: Number, default: 0 },
+    views: { type: Number, default: 0 }, 
     comments: [{ username: String, text: String, createdAt: { type: Date, default: Date.now } }],
     createdAt: { type: Date, default: Date.now } 
 });
 
-app.get('/', (req, res) => res.send('Mitra Vibe 3.0 API!'));
+app.get('/', (req, res) => res.send('Mitra Vibe 4.0 API!'));
 
 app.post('/signup', async (req, res) => {
     try { const newUser = new User(req.body); await newUser.save(); res.status(201).json({ message: "Welcome! 🎉" }); }
@@ -40,7 +45,9 @@ app.post('/login', async (req, res) => {
 });
 
 app.put('/update-profile/:id', async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, { profilePic: req.body.profilePic, bio: req.body.bio, website: req.body.website }, { new: true });
+    const user = await User.findByIdAndUpdate(req.params.id, { 
+        profilePic: req.body.profilePic, coverPic: req.body.coverPic, bio: req.body.bio, website: req.body.website 
+    }, { new: true });
     res.json({ message: "Profile Updated!", user });
 });
 
@@ -55,11 +62,11 @@ app.get('/posts', async (req, res) => {
 });
 
 app.post('/like/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }); res.json({ message: "Liked!" }); });
+app.post('/view/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }); res.json({ message: "Viewed!" }); });
 app.delete('/delete-post/:id', async (req, res) => { await Post.findByIdAndDelete(req.params.id); res.json({ message: "Deleted!" }); });
 app.put('/edit-post/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { content: req.body.content }); res.json({ message: "Edited!" }); });
 app.put('/privacy-post/:id', async (req, res) => { const post = await Post.findById(req.params.id); await Post.findByIdAndUpdate(req.params.id, { privacy: post.privacy === 'Public' ? 'Private' : 'Public' }); res.json({ message: "Privacy Changed!" }); });
 
-// Delete Comment Feature
 app.delete('/delete-comment/:postId/:commentId', async (req, res) => {
     await Post.findByIdAndUpdate(req.params.postId, { $pull: { comments: { _id: req.params.commentId } } });
     res.json({ message: "Comment Deleted!" });
@@ -70,4 +77,4 @@ app.post('/comment/:id', async (req, res) => {
     res.json({ message: "Commented!" });
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("Live 3.0!"));
+app.listen(process.env.PORT || 3000, () => console.log("Live 4.0!"));
