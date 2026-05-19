@@ -22,13 +22,14 @@ const User = mongoose.model('User', {
 const Post = mongoose.model('Post', { 
     username: String, userDp: String, content: String, imageUrl: String, location: String,
     privacy: { type: String, default: 'Public' }, isPinned: { type: Boolean, default: false },
+    linkPreview: { url: String, title: String, image: String }, // NAYA: Link Preview Data
     reactions: { like: {type: Number, default: 0}, love: {type: Number, default: 0}, haha: {type: Number, default: 0} },
     views: { type: Number, default: 0 }, 
     comments: [{ username: String, text: String, createdAt: { type: Date, default: Date.now } }],
     createdAt: { type: Date, default: Date.now } 
 });
 
-app.get('/', (req, res) => res.send('Mitra Vibe 5.0 API!'));
+app.get('/', (req, res) => res.send('Mitra Vibe API Running!'));
 
 app.post('/signup', async (req, res) => {
     try { const newUser = new User(req.body); await newUser.save(); res.status(201).json({ message: "Welcome! 🎉" }); }
@@ -55,32 +56,28 @@ app.get('/posts', async (req, res) => {
     res.json(posts);
 });
 
-// React API
+// NAYA: Link scraping API
+app.post('/fetch-preview', async (req, res) => {
+    try {
+        const response = await fetch(req.body.url);
+        const html = await response.text();
+        const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+        const imgMatch = html.match(/<meta.*?property="og:image".*?content="(.*?)".*?>/i);
+        res.json({
+            title: titleMatch ? titleMatch[1] : req.body.url,
+            image: imgMatch ? imgMatch[1] : 'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=600',
+            url: req.body.url
+        });
+    } catch(err) { res.json(null); }
+});
+
 app.post('/react/:id/:type', async (req, res) => {
-    const type = req.params.type; // like, love, haha
-    let update = {}; update[`reactions.${type}`] = 1;
-    await Post.findByIdAndUpdate(req.params.id, { $inc: update });
-    res.json({ message: "Reacted!" });
+    let update = {}; update[`reactions.${req.params.type}`] = 1;
+    await Post.findByIdAndUpdate(req.params.id, { $inc: update }); res.json({ message: "Reacted!" });
 });
-
-app.post('/follow/:username', async (req, res) => {
-    // Simple logic for UI demo: just increment the target's follower count
-    await User.findOneAndUpdate({name: req.params.username}, { $inc: { followers: 1 } });
-    res.json({ message: "Followed!" });
-});
-
-app.post('/pin/:id', async (req, res) => {
-    const post = await Post.findById(req.params.id);
-    await Post.findByIdAndUpdate(req.params.id, { isPinned: !post.isPinned });
-    res.json({ message: "Pin toggled!" });
-});
-
+app.post('/follow/:username', async (req, res) => { await User.findOneAndUpdate({name: req.params.username}, { $inc: { followers: 1 } }); res.json({ message: "Followed!" }); });
+app.post('/pin/:id', async (req, res) => { const post = await Post.findById(req.params.id); await Post.findByIdAndUpdate(req.params.id, { isPinned: !post.isPinned }); res.json({ message: "Pin toggled!" }); });
 app.post('/view/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }); res.json({ message: "Viewed!" }); });
 app.delete('/delete-post/:id', async (req, res) => { await Post.findByIdAndDelete(req.params.id); res.json({ message: "Deleted!" }); });
-app.put('/edit-post/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { content: req.body.content }); res.json({ message: "Edited!" }); });
-app.put('/privacy-post/:id', async (req, res) => { const post = await Post.findById(req.params.id); await Post.findByIdAndUpdate(req.params.id, { privacy: post.privacy === 'Public' ? 'Private' : 'Public' }); res.json({ message: "Privacy Changed!" }); });
 
-app.delete('/delete-comment/:postId/:commentId', async (req, res) => { await Post.findByIdAndUpdate(req.params.postId, { $pull: { comments: { _id: req.params.commentId } } }); res.json({ message: "Comment Deleted!" }); });
-app.post('/comment/:id', async (req, res) => { await Post.findByIdAndUpdate(req.params.id, { $push: { comments: { username: req.body.username, text: req.body.text } } }); res.json({ message: "Commented!" }); });
-
-app.listen(process.env.PORT || 3000, () => console.log("Live 5.0!"));
+app.listen(process.env.PORT || 3000, () => console.log("Live with Link Previews!"));
