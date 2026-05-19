@@ -2,45 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mitra Vibe Ultimate</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitra Vibe</title>
     <style>
-        /* Force CSS Styling */
-        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
-        .card { background: white; padding: 20px; border-radius: 12px; margin: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; }
+        body { font-family: sans-serif; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 12px; margin: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #1877f2; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        #main-app { display: none; }
+        button { width: 100%; padding: 10px; background: #1877f2; color: white; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
+
     <div id="auth-area" class="card">
         <h3>Login</h3>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="pass" placeholder="Password">
         <button onclick="login()">Login</button>
     </div>
-    
-    <div id="main-app">
+
+    <div id="main-app" style="display:none;">
         <div class="card">Welcome to Mitra Vibe!</div>
+        <div id="feed" class="card">Feed content will go here...</div>
     </div>
 
     <script>
-        // Copy the logic here:
         async function login() {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
+            
             const res = await fetch("https://mitravibe-core.onrender.com/login", { 
                 method: 'POST', 
                 headers: {'Content-Type':'application/json'}, 
-                body: JSON.stringify({email, password: pass}) 
+                body: JSON.stringify({email: email, password: pass}) 
             });
+
             if(res.ok) {
+                // Yahan UI switch ho raha hai
                 document.getElementById('auth-area').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
                 alert("Login Successful!");
-            } else { alert("Login Failed!"); }
+            } else {
+                alert("Login Failed!");
+            }
         }
     </script>
 </body>
