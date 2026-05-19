@@ -13,6 +13,7 @@
         button { width: 100%; padding: 12px; background: #1877f2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
         button:hover { background: #1565c0; }
         .post { background: white; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; } /* Image CSS */
         .post-user { font-weight: bold; color: #1877f2; font-size: 18px; }
         .post-content { margin: 10px 0; font-size: 16px; color: #1c1e21; }
         .post-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
@@ -39,6 +40,7 @@
         <div id="post-area" class="card">
             <h3>Welcome, <span id="display-name"></span>!</h3>
             <textarea id="content" placeholder="Share your vibe..."></textarea>
+            <input type="text" id="img-url" placeholder="Paste Image Link here (Optional)">
             <button onclick="createPost()">Post Now</button>
             <button onclick="location.reload()" style="background:#e4e6eb; color:black; margin-top:10px;">Logout</button>
         </div>
@@ -94,19 +96,22 @@
 
         async function createPost() {
             const content = document.getElementById('content').value;
-            if(!content) return;
+            const imageUrl = document.getElementById('img-url').value; // Naya!
+            if(!content && !imageUrl) return alert("Bhai, kuch toh likh ya photo daal!");
+            
             await fetch(`${API_URL}/create-post`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser.name, content })
+                body: JSON.stringify({ username: currentUser.name, content, imageUrl })
             });
             document.getElementById('content').value = '';
+            document.getElementById('img-url').value = '';
             loadPosts();
         }
 
         async function likePost(id) {
             await fetch(`${API_URL}/like/${id}`, { method: 'POST' });
-            loadPosts(); // UI update karne ke liye
+            loadPosts(); 
         }
 
         async function loadPosts() {
@@ -115,10 +120,14 @@
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
             posts.forEach(p => {
+                // Agar photo link hai toh dikhao, nahi toh hide rakho
+                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" style="display:block;">` : '';
+                
                 feed.innerHTML += `
                     <div class="post">
                         <span class="post-user">${p.username}</span>
                         <div class="post-content">${p.content}</div>
+                        ${imgTag} 
                         <div class="post-footer">
                             <span style="color:#777; font-size:12px;">${new Date(p.createdAt).toLocaleString()}</span>
                             <button class="like-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0} Likes</button>
@@ -128,7 +137,7 @@
         }
 
         loadPosts();
-        setInterval(loadPosts, 10000); // Har 10 second mein posts apne aap update honge
+        setInterval(loadPosts, 10000); 
     </script>
 </body>
 </html>
