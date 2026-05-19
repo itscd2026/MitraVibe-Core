@@ -4,28 +4,71 @@
     <meta charset="UTF-8"><title>Mitra Vibe Ultimate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --bg: #f0f2f5; --card: white; --primary: #1877f2; }
-        body { font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        .bottom-tabs { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #ddd; z-index: 100; }
-        .menu-content { display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; padding: 10px; z-index: 10; }
+        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding-bottom: 80px; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; }
+        .bottom-tabs { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #ddd; z-index: 100; }
+        .menu-content { display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; padding: 10px; z-index: 10; border-radius: 8px; }
         .show { display: block; }
     </style>
 </head>
 <body>
-    <div id="auth-area" class="card"><h3>Login</h3><input type="email" id="email"><input type="password" id="pass"><button onclick="login()">Login</button></div>
+    <div id="auth-area" class="card"><h3>Login</h3><input type="email" id="email" placeholder="Email"><input type="password" id="pass" placeholder="Password"><button onclick="login()">Login</button></div>
+    
     <div id="main-app" style="display:none;">
-        <div class="card"><textarea id="content" placeholder="What's on your mind?"></textarea><input type="file" id="img-upload"><button onclick="createPost()">Post</button></div>
-        <div id="profile-area" class="card" style="display:none;">...Profile Details...</div>
+        <div class="card"><textarea id="content" placeholder="What's on your mind?"></textarea><input type="file" id="img-upload" accept="image/*"><button onclick="createPost()">Post Now</button></div>
+        <div id="profile-area" class="card" style="display:none;"><h3>My Profile</h3><div id="user-stats"></div></div>
         <div id="feed"></div>
     </div>
-    <div class="bottom-tabs">
-        <button onclick="switchTab('feed')">🌍</button><button onclick="switchTab('saved')">🔖</button><button onclick="switchTab('settings')">⚙️</button><button onclick="switchTab('profile')">👤</button>
+
+    <div class="bottom-tabs" id="nav-tabs" style="display:none;">
+        <button onclick="switchTab('feed')">🌍</button><button onclick="switchTab('profile')">👤</button>
     </div>
 
     <script>
-        // Saare functions (loadPosts, createPost, editPost, deletePost, privacyToggle, deleteComment, react, switchTab)
-        // Yahan Edit aur Privacy ka logic menu-content mein fix kar diya hai.
+        const API_URL = "https://mitravibe-core.onrender.com";
+        let currentUser = null; let base64Img = "";
+
+        document.getElementById('img-upload').addEventListener('change', (e) => {
+            const reader = new FileReader(); reader.onload = (e) => base64Img = e.target.result; reader.readAsDataURL(e.target.files[0]);
+        });
+
+        async function login() {
+            const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email: document.getElementById('email').value, password: document.getElementById('pass').value}) });
+            if(res.ok) { currentUser = await res.json(); document.getElementById('auth-area').style.display='none'; document.getElementById('main-app').style.display='block'; document.getElementById('nav-tabs').style.display='flex'; loadPosts(); }
+        }
+
+        async function createPost() {
+            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username: currentUser.name, content: document.getElementById('content').value, imageUrl: base64Img }) });
+            loadPosts();
+        }
+
+        async function loadPosts() {
+            let posts = await (await fetch(`${API_URL}/posts`)).json();
+            const feed = document.getElementById('feed'); feed.innerHTML = '';
+            posts.forEach(p => {
+                let menu = (currentUser && p.username === currentUser.name) ? `
+                    <div style="position:relative;"><button onclick="toggleMenu('${p._id}')">⋮</button>
+                    <div id="menu-${p._id}" class="menu-content">
+                        <button onclick="editPost('${p._id}')">✏️ Edit</button>
+                        <button onclick="togglePrivacy('${p._id}')">🔒 Privacy</button>
+                        <button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete</button>
+                    </div></div>` : '';
+
+                feed.innerHTML += `
+                    <div class="post card">
+                        <div style="display:flex; justify-content:space-between;"><b>${p.username}</b> ${menu}</div>
+                        <div>${p.content}</div>
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                    </div>`;
+            });
+        }
+
+        function toggleMenu(id) { document.getElementById("menu-" + id).classList.toggle("show"); }
+        async function editPost(id) { let txt = prompt("Edit content:"); if(txt) { await fetch(`${API_URL}/edit-post/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content: txt})}); loadPosts(); } }
+        async function togglePrivacy(id) { await fetch(`${API_URL}/privacy-post/${id}`, {method:'PUT'}); loadPosts(); }
+        async function deletePost(id) { if(confirm("Delete post?")) { await fetch(`${API_URL}/delete-post/${id}`, {method:'DELETE'}); loadPosts(); } }
+        function switchTab(t) { document.getElementById('profile-area').style.display = (t==='profile')?'block':'none'; document.getElementById('feed').style.display = (t==='profile')?'none':'block'; }
     </script>
 </body>
 </html>
