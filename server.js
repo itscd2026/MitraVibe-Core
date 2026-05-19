@@ -3,26 +3,22 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 
-// Middleware
 app.use(bodyParser.json());
 
-// MongoDB Connection
-const mongoURI = "mongodb+srv://Mitraadmin:Its%40%408989@cluster0.rbq11om.mongodb.net/MitraVibeDB?retryWrites=true&w=majority";
+const mongoURI = "mongodb+srv://Mitraadmin:Its%40%408989@cluster0.rbq11om.mongodb.net/MitraVibeDB?retryWrites=true&w=majority&tls=true";
 mongoose.connect(mongoURI).then(() => console.log("✅ Database Connected!"));
 
-// User Model (Schema)
 const User = mongoose.model('User', {
     name: String,
     email: { type: String, unique: true },
     password: String
 });
 
-// Default Route
 app.get('/', (req, res) => {
-    res.send('Mitra Vibe Backend is Live and Testing Signup! 🚀');
+    res.send('Mitra Vibe Backend is Live! 🚀');
 });
 
-// Signup Route (POST Request)
+// Signup Route
 app.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -30,7 +26,23 @@ app.post('/signup', async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: "User Registered Successfully! 🎉" });
     } catch (err) {
-        res.status(400).json({ error: "Email already exists or Invalid data!" });
+        res.status(400).json({ error: "Email already exists!" });
+    }
+});
+
+// Login Route (Naya Feature!)
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email, password: password });
+        
+        if (user) {
+            res.status(200).json({ message: `Welcome back, ${user.name}! 👋`, userId: user._id });
+        } else {
+            res.status(401).json({ error: "Ghalat Email ya Password! ❌" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Server Error!" });
     }
 });
 
