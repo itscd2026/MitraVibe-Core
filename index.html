@@ -3,59 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitra Vibe 🚀</title>
+    <title>Mitra Vibe 2.0 🚀</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .nav { background: #1877f2; color: white; width: 100%; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 12px; background: #1877f2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
-        button:hover { background: #1565c0; }
-        .post { background: white; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; }
-        .post-user { font-weight: bold; color: #1877f2; font-size: 18px; display: flex; justify-content: space-between; align-items: center;}
-        .post-content { margin: 10px 0; font-size: 16px; color: #1c1e21; }
-        .post-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-        .like-btn { background: #f0f2f5; color: #65676b; width: auto; padding: 5px 15px; font-size: 14px; margin: 0; }
-        .dropdown { position: relative; display: inline-block; }
-        .dropbtn { background: none; border: none; font-size: 20px; color: #65676b; cursor: pointer; padding: 0 5px; width: auto; }
-        .dropdown-content { display: none; position: absolute; right: 0; background-color: white; min-width: 120px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 8px; overflow: hidden; }
-        .dropdown-content button { background: white; color: black; padding: 12px; text-align: left; border-radius: 0; font-weight: normal; font-size: 14px; }
+        :root { --bg: #f0f2f5; --card: white; --text: #1c1e21; --primary: #1877f2; --nav: white; }
+        body.dark-mode { --bg: #18191a; --card: #242526; --text: #e4e6eb; --nav: #242526; --primary: #2d88ff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
+        .nav { background: var(--nav); color: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; font-weight: bold; font-size: 22px; }
+        .container { max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: var(--bg); color: var(--text); }
+        button { padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        
+        /* Tabs & Profile */
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 20px; display: none; }
+        .tab-btn { background: transparent; color: var(--text); border-bottom: 3px solid transparent; border-radius: 0; padding: 10px; flex: 1; }
+        .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); }
+        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .dp-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        
+        /* Post UI */
+        .post { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; }
+        .actions { display: flex; gap: 10px; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
+        .action-btn { background: transparent; color: var(--text); font-size: 14px; padding: 5px 10px; }
+        
+        /* Menu & Toast */
+        .dropdown-content { display: none; position: absolute; right: 0; background: var(--card); border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10; }
+        .dropdown-content button { width: 100%; background: transparent; color: var(--text); text-align: left; }
         .show { display: block; }
-        .privacy-badge { font-size: 11px; background: #e4e6eb; color: #65676b; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: normal;}
-        
-        /* Comments CSS */
-        .comments-section { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
-        .comment-item { margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .comment-input-area { display: flex; gap: 5px; margin-top: 10px; }
-        .comment-input-area input { margin: 0; padding: 8px; font-size: 14px; }
-        .comment-input-area button { width: auto; padding: 8px 15px; margin: 0; font-size: 14px; }
-        
-        #post-area { display: none; }
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
 
-    <div class="nav">Mitra Vibe 🚀</div>
+    <div class="nav">
+        <span>Mitra Vibe 🚀</span>
+        <button onclick="toggleDarkMode()" style="background:transparent; font-size:20px;">🌗</button>
+    </div>
+
+    <div id="toast">Message</div>
 
     <div class="container">
         <div id="auth-area" class="card">
-            <h3 id="auth-title">Login</h3>
-            <div id="auth-form">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="pass" placeholder="Password">
-                <button onclick="login()">Login</button>
-                <p style="text-align:center;">Naye hain? <a href="#" onclick="showSignup()">Signup karein</a></p>
-            </div>
+            <h3>Login to Vibe</h3>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pass" placeholder="Password">
+            <button onclick="login()" style="width:100%">Login</button>
+            <p style="text-align:center;">Naye hain? <button onclick="showSignup()" class="action-btn" style="color:var(--primary)">Signup</button></p>
         </div>
 
-        <div id="post-area" class="card">
-            <h3>Welcome, <span id="display-name"></span>!</h3>
-            <textarea id="content" placeholder="Share your vibe..."></textarea>
-            <input type="text" id="img-url" placeholder="Paste Image Link here (Optional)">
+        <div class="tabs" id="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('feed')">🌍 Global Feed</button>
+            <button class="tab-btn" onclick="switchTab('profile')">👤 My Profile</button>
+        </div>
+
+        <div id="post-area" class="card" style="display:none;">
+            <div class="profile-header">
+                <img id="my-dp" src="" class="dp-img">
+                <div>
+                    <h3 style="margin:0" id="display-name"></h3>
+                    <small id="display-bio" style="color:gray;"></small>
+                </div>
+            </div>
+            <textarea id="content" placeholder="What's on your mind?"></textarea>
+            <input type="text" id="img-url" placeholder="Paste Image Link (Optional)">
             <button onclick="createPost()">Post Now</button>
-            <button onclick="location.reload()" style="background:#e4e6eb; color:black; margin-top:10px;">Logout</button>
+        </div>
+
+        <input type="text" id="search-box" placeholder="🔍 Search posts or users..." oninput="loadPosts()" style="display:none;">
+
+        <div id="edit-profile-area" class="card" style="display:none;">
+            <h3>Edit Profile</h3>
+            <input type="text" id="new-dp" placeholder="Profile Pic URL">
+            <input type="text" id="new-bio" placeholder="Your Bio">
+            <button onclick="updateProfile()">Save Profile</button>
         </div>
 
         <div id="feed"></div>
@@ -64,124 +91,124 @@
     <script>
         const API_URL = "https://mitravibe-core.onrender.com";
         let currentUser = null;
+        let currentTab = 'feed';
 
-        function showSignup() {
-            document.getElementById('auth-title').innerText = "Signup";
-            document.getElementById('auth-form').innerHTML = `
-                <input type="text" id="name" placeholder="Full Name">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="pass" placeholder="Password">
-                <button onclick="register()">Join Now</button>
-                <p style="text-align:center;"><a href="#" onclick="location.reload()">Back to Login</a></p>
-            `;
+        function showToast(msg) {
+            let toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        async function register() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('pass').value;
-            const res = await fetch(`${API_URL}/signup`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password }) });
-            if(res.ok) location.reload(); else alert("Error!");
-        }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
-            const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+            const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, password}) });
             const data = await res.json();
             if(res.ok) {
                 currentUser = data.user;
                 document.getElementById('auth-area').style.display = 'none';
                 document.getElementById('post-area').style.display = 'block';
+                document.getElementById('nav-tabs').style.display = 'flex';
+                document.getElementById('search-box').style.display = 'block';
                 document.getElementById('display-name').innerText = currentUser.name;
-                loadPosts(); 
-            } else { alert(data.error); }
+                document.getElementById('display-bio').innerText = currentUser.bio;
+                document.getElementById('my-dp').src = currentUser.profilePic;
+                showToast(`Welcome back, ${currentUser.name}!`);
+                loadPosts();
+            } else { showToast(data.error); }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('edit-profile-area').style.display = (tab === 'profile') ? 'block' : 'none';
+            document.getElementById('post-area').style.display = (tab === 'feed') ? 'block' : 'none';
+            loadPosts();
+        }
+
+        async function updateProfile() {
+            const dp = document.getElementById('new-dp').value || currentUser.profilePic;
+            const bio = document.getElementById('new-bio').value || currentUser.bio;
+            const res = await fetch(`${API_URL}/update-profile/${currentUser._id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({profilePic: dp, bio}) });
+            const data = await res.json();
+            currentUser = data.user;
+            document.getElementById('display-bio').innerText = currentUser.bio;
+            document.getElementById('my-dp').src = currentUser.profilePic;
+            showToast("Profile Updated! 🚀");
+            loadPosts();
         }
 
         async function createPost() {
             const content = document.getElementById('content').value;
             const imageUrl = document.getElementById('img-url').value;
-            if(!content && !imageUrl) return;
-            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.name, content, imageUrl }) });
-            document.getElementById('content').value = '';
-            document.getElementById('img-url').value = '';
+            if(!content && !imageUrl) return showToast("Write something to post!");
+            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username: currentUser.name, userDp: currentUser.profilePic, content, imageUrl }) });
+            document.getElementById('content').value = ''; document.getElementById('img-url').value = '';
+            showToast("Posted successfully! 🎉");
             loadPosts();
         }
 
-        async function likePost(id) {
-            await fetch(`${API_URL}/like/${id}`, { method: 'POST' });
-            loadPosts(); 
-        }
-
-        // NAYA: Comment Add karne ka function
-        async function addComment(id) {
-            const text = document.getElementById(`cmt-${id}`).value;
-            if(!text) return;
-            await fetch(`${API_URL}/comment/${id}`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ username: currentUser.name, text: text }) 
-            });
-            loadPosts();
-        }
+        async function likePost(id) { await fetch(`${API_URL}/like/${id}`, { method: 'POST' }); loadPosts(); }
+        
+        function sharePost(text) { navigator.clipboard.writeText(text); showToast("Post Copied to Clipboard! 🔗"); }
 
         function toggleMenu(id) { document.getElementById("menu-" + id).classList.toggle("show"); }
-        window.onclick = function(e) { if (!e.target.matches('.dropbtn')) { document.querySelectorAll(".dropdown-content").forEach(d => d.classList.remove('show')); } }
+        window.onclick = function(e) { if (!e.target.matches('.action-btn')) { document.querySelectorAll(".dropdown-content").forEach(d => d.classList.remove('show')); } }
 
-        async function editPost(id) {
-            let newContent = prompt("Post update karein:");
-            if(newContent) { await fetch(`${API_URL}/edit-post/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newContent }) }); loadPosts(); }
-        }
-        async function togglePrivacy(id) { await fetch(`${API_URL}/privacy-post/${id}`, { method: 'PUT' }); loadPosts(); }
-        async function deletePost(id) { if(confirm("Delete?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); loadPosts(); } }
+        async function editPost(id) { let newContent = prompt("Edit post:"); if(newContent) { await fetch(`${API_URL}/edit-post/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: newContent }) }); showToast("Post Edited!"); loadPosts(); } }
+        async function togglePrivacy(id) { await fetch(`${API_URL}/privacy-post/${id}`, { method: 'PUT' }); showToast("Privacy Updated!"); loadPosts(); }
+        async function deletePost(id) { if(confirm("Delete post?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); showToast("Post Deleted! 🗑️"); loadPosts(); } }
 
         async function loadPosts() {
-            const res = await fetch(`${API_URL}/posts`);
-            const posts = await res.json();
+            const searchQ = document.getElementById('search-box').value;
+            const res = await fetch(`${API_URL}/posts?search=${searchQ}`);
+            let posts = await res.json();
+            
+            if(currentTab === 'profile' && currentUser) {
+                posts = posts.filter(p => p.username === currentUser.name);
+            }
+
             const feed = document.getElementById('feed');
             feed.innerHTML = '';
             posts.forEach(p => {
-                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" style="display:block;">` : '';
+                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : '';
+                const dpTag = p.userDp ? p.userDp : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 
                 let menuHtml = '';
                 if(currentUser && p.username === currentUser.name) {
                     menuHtml = `
-                    <div class="dropdown"><button onclick="toggleMenu('${p._id}')" class="dropbtn">⋮</button>
+                    <div style="position:relative;">
+                        <button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button>
                         <div id="menu-${p._id}" class="dropdown-content">
                             <button onclick="editPost('${p._id}')">✏️ Edit</button>
-                            <button onclick="togglePrivacy('${p._id}')">🔒 ${p.privacy === 'Public' ? 'Private' : 'Public'}</button>
+                            <button onclick="togglePrivacy('${p._id}')">🔒 Privacy</button>
                             <button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete</button>
                         </div>
                     </div>`;
                 }
 
-                // Comments Render HTML
-                let commentsHtml = p.comments.map(c => `<div class="comment-item"><b>${c.username}:</b> ${c.text}</div>`).join('');
-                let commentInputHtml = currentUser ? `
-                    <div class="comment-input-area">
-                        <input type="text" id="cmt-${p._id}" placeholder="Write a comment...">
-                        <button onclick="addComment('${p._id}')">Send</button>
-                    </div>` : '';
-
                 feed.innerHTML += `
                     <div class="post">
-                        <div class="post-user"><div>${p.username} <span class="privacy-badge">${p.privacy || 'Public'}</span></div>${menuHtml}</div>
+                        <div class="post-header">
+                            <div class="user-info">
+                                <img src="${dpTag}" class="dp-img" style="width:40px;height:40px;">
+                                <div>${p.username} <span style="font-size:12px; font-weight:normal; color:gray;">• ${p.privacy || 'Public'}</span></div>
+                            </div>
+                            ${menuHtml}
+                        </div>
                         <div class="post-content">${p.content}</div>
                         ${imgTag} 
-                        <div class="post-footer">
-                            <span style="color:#777; font-size:12px;">${new Date(p.createdAt).toLocaleString()}</span>
-                            <button class="like-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0}</button>
-                        </div>
-                        <div class="comments-section">
-                            ${commentsHtml}
-                            ${commentInputHtml}
+                        <div class="actions">
+                            <button class="action-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0}</button>
+                            <button class="action-btn" onclick="sharePost('${p.content}')">🔗 Share</button>
                         </div>
                     </div>`;
             });
         }
-
-        loadPosts();
-        setInterval(loadPosts, 10000); 
     </script>
 </body>
 </html>
