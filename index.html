@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitra Vibe 3.0 🚀</title>
+    <title>Mitra Vibe 4.0 🚀</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1877f2">
     <style>
@@ -12,24 +12,34 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; transition: 0.3s; }
         .nav { background: var(--nav); color: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; font-weight: bold; font-size: 22px; }
         .container { max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: var(--bg); color: var(--text); resize: none; overflow: hidden; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: var(--bg); color: var(--text); resize: none; }
         button { padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .file-upload-btn { background: #e4e6eb; color: black; display: block; text-align: center; margin-bottom: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
         input[type="file"] { display: none; }
         
         .tabs { display: flex; justify-content: space-around; margin-bottom: 20px; display: none; }
-        .tab-btn { background: transparent; color: var(--text); border-bottom: 3px solid transparent; border-radius: 0; padding: 10px; flex: 1; }
+        .tab-btn { background: transparent; color: var(--text); border-bottom: 3px solid transparent; border-radius: 0; padding: 10px; flex: 1; font-weight:bold; }
         .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); }
-        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .dp-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
         
+        /* Profile & Cover UI */
+        .cover-photo { width: 100%; height: 150px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
+        .profile-content { position: relative; z-index: 1; margin-top: 90px; text-align: center; }
+        .dp-img-large { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); background: white; }
+        .stats-row { display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-weight: bold; }
+        .stat-box { text-align: center; font-size: 14px; color: gray; }
+        .stat-box span { display: block; font-size: 18px; color: var(--text); }
+        
+        /* Post UI */
         .post { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .user-info { display: flex; align-items: center; gap: 10px; font-weight: bold; }
-        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 400px; object-fit: cover; }
-        .actions { display: flex; gap: 10px; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
-        .action-btn { background: transparent; color: var(--text); font-size: 14px; padding: 5px 10px; }
+        .dp-img-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .online-dot { width: 10px; height: 10px; background-color: #31a24c; border-radius: 50%; display: inline-block; margin-left: 5px; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 500px; object-fit: cover; cursor: pointer; }
+        .actions { display: flex; gap: 10px; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; justify-content: space-between; }
+        .action-btn { background: transparent; color: var(--text); font-size: 14px; padding: 5px; }
+        .hashtag { color: var(--primary); font-weight: bold; cursor: pointer; }
         
         .dropdown-content { display: none; position: absolute; right: 0; background: var(--card); border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10; }
         .dropdown-content button { width: 100%; background: transparent; color: var(--text); text-align: left; }
@@ -37,7 +47,6 @@
         
         .comments-section { background: var(--bg); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
         .comment-item { display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; padding: 5px 0; }
-        .floating-btn { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center; z-index: 1000; }
         
         #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1001; left: 50%; bottom: 30px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
@@ -53,7 +62,6 @@
     </div>
 
     <div id="toast">Message</div>
-    <div class="floating-btn" id="refresh-btn" onclick="loadPosts()">🔄</div>
 
     <div class="container">
         <div id="auth-area" class="card">
@@ -65,39 +73,46 @@
         </div>
 
         <div class="tabs" id="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('feed')">🌍 Feed</button>
+            <button class="tab-btn active" onclick="switchTab('feed')">🌍 Global</button>
             <button class="tab-btn" onclick="switchTab('saved')">🔖 Saved</button>
             <button class="tab-btn" onclick="switchTab('profile')">👤 Profile</button>
         </div>
 
-        <div id="post-area" class="card" style="display:none;">
-            <div class="profile-header">
-                <img id="my-dp" src="" class="dp-img">
-                <div>
-                    <h3 style="margin:0"><span id="display-name"></span> ✅</h3>
-                    <small id="display-bio" style="color:gray;"></small><br>
-                    <a id="display-web" href="#" target="_blank" style="font-size:12px; color:var(--primary); text-decoration:none;"></a>
-                    <div style="font-size: 12px; margin-top:5px; font-weight:bold;">Total Posts: <span id="post-count">0</span></div>
-                </div>
-            </div>
-            
-            <textarea id="content" placeholder="What's on your mind?" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-            
-            <label class="file-upload-btn">
-                📸 Select Photo from Gallery
-                <input type="file" id="image-upload" accept="image/*">
-            </label>
+        <div id="create-area" class="card" style="display:none; padding-bottom:10px;">
+            <textarea id="content" placeholder="What's on your mind? Type #tags..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+            <label class="file-upload-btn">📸 Add Photo <input type="file" id="image-upload" accept="image/*"></label>
             <img id="preview-img" style="width:100%; border-radius:8px; display:none; margin-bottom:10px;">
-            
             <button onclick="createPost()" style="width:100%;">Post Now</button>
         </div>
 
-        <div id="edit-profile-area" class="card" style="display:none;">
-            <h3>Edit Profile</h3>
+        <div id="profile-area" class="card" style="display:none; text-align:center;">
+            <img id="cover-img" class="cover-photo" src="">
+            <div class="profile-content">
+                <img id="my-dp" class="dp-img-large" src="">
+                <h2 style="margin:5px 0;"><span id="display-name"></span> <span class="online-dot"></span></h2>
+                <div id="display-bio" style="color:gray; font-size:14px; margin-bottom:5px;"></div>
+                <a id="display-web" href="#" target="_blank" style="font-size:13px; color:var(--primary); text-decoration:none;"></a>
+                
+                <div class="stats-row">
+                    <div class="stat-box"><span id="post-count">0</span>Posts</div>
+                    <div class="stat-box"><span id="follower-count">0</span>Followers</div>
+                    <div class="stat-box"><span id="following-count">0</span>Following</div>
+                </div>
+                
+                <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                    <button onclick="document.getElementById('edit-profile-area').style.display='block'" style="background:#e4e6eb; color:black;">Edit Profile</button>
+                    <button onclick="copyProfileLink()">🔗 Share Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-profile-area" class="card" style="display:none; margin-top:20px;">
+            <h3>Edit Profile Details</h3>
+            <input type="text" id="new-cover" placeholder="Cover Photo URL (Link)">
             <input type="text" id="new-dp" placeholder="Profile Pic URL (Link)">
             <input type="text" id="new-bio" placeholder="Your Bio">
             <input type="text" id="new-web" placeholder="Website / Instagram Link">
-            <button onclick="updateProfile()">Save Profile</button>
+            <button onclick="updateProfile()" style="width:100%;">Save Changes</button>
         </div>
 
         <div id="feed"></div>
@@ -110,53 +125,42 @@
         let base64Image = "";
         let savedPostsList = JSON.parse(localStorage.getItem('savedPosts')) || [];
 
-        function showToast(msg) {
-            let t = document.getElementById("toast"); t.innerText = msg; t.className = "show";
-            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-        }
-
+        function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
         function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+        function copyProfileLink() { navigator.clipboard.writeText(window.location.href); showToast("Profile Link Copied! 🔗"); }
 
-        // Time Ago Feature
         function timeAgo(date) {
             const seconds = Math.floor((new Date() - new Date(date)) / 1000);
             if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return minutes + 'm ago';
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return hours + 'h ago';
-            const days = Math.floor(hours / 24);
-            return days + 'd ago';
+            const minutes = Math.floor(seconds / 60); if (minutes < 60) return minutes + 'm ago';
+            const hours = Math.floor(minutes / 60); if (hours < 24) return hours + 'h ago';
+            const days = Math.floor(hours / 24); return days + 'd ago';
         }
 
-        // Image to Base64 logic
+        // Hashtag formatter
+        function formatText(text) {
+            return text.replace(/#(\w+)/g, '<span class="hashtag">#$1</span>');
+        }
+
         document.getElementById('image-upload').addEventListener('change', function() {
             const file = this.files[0];
             if(file) {
                 const reader = new FileReader();
-                reader.onload = function(e) { 
-                    base64Image = e.target.result; 
-                    document.getElementById('preview-img').src = base64Image;
-                    document.getElementById('preview-img').style.display = 'block';
-                };
+                reader.onload = function(e) { base64Image = e.target.result; document.getElementById('preview-img').src = base64Image; document.getElementById('preview-img').style.display = 'block'; };
                 reader.readAsDataURL(file);
             }
         });
 
         async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('pass').value;
+            const email = document.getElementById('email').value; const password = document.getElementById('pass').value;
             const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, password}) });
             const data = await res.json();
             if(res.ok) {
                 currentUser = data.user;
                 document.getElementById('auth-area').style.display = 'none';
-                document.getElementById('post-area').style.display = 'block';
+                document.getElementById('create-area').style.display = 'block';
                 document.getElementById('nav-tabs').style.display = 'flex';
-                document.getElementById('refresh-btn').style.display = 'flex';
-                updateProfileUI();
-                showToast(`Welcome, ${currentUser.name}! ✅`);
-                loadPosts();
+                updateProfileUI(); showToast(`Welcome, ${currentUser.name}! 🟢`); loadPosts();
             } else { showToast(data.error); }
         }
 
@@ -164,110 +168,96 @@
             document.getElementById('display-name').innerText = currentUser.name;
             document.getElementById('display-bio').innerText = currentUser.bio;
             document.getElementById('my-dp').src = currentUser.profilePic;
-            if(currentUser.website) {
-                document.getElementById('display-web').innerText = "🔗 " + currentUser.website;
-                document.getElementById('display-web').href = currentUser.website;
-            }
+            document.getElementById('cover-img').src = currentUser.coverPic || 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800';
+            document.getElementById('follower-count').innerText = currentUser.followers || 0;
+            document.getElementById('following-count').innerText = currentUser.following || 0;
+            if(currentUser.website) { document.getElementById('display-web').innerText = "🔗 " + currentUser.website; document.getElementById('display-web').href = currentUser.website; }
         }
 
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('edit-profile-area').style.display = (tab === 'profile') ? 'block' : 'none';
-            document.getElementById('post-area').style.display = (tab === 'feed' || tab === 'profile') ? 'block' : 'none';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); event.target.classList.add('active');
+            document.getElementById('profile-area').style.display = (tab === 'profile') ? 'block' : 'none';
+            document.getElementById('create-area').style.display = (tab === 'feed') ? 'block' : 'none';
+            document.getElementById('edit-profile-area').style.display = 'none';
             loadPosts();
         }
 
         async function updateProfile() {
             const dp = document.getElementById('new-dp').value || currentUser.profilePic;
+            const cover = document.getElementById('new-cover').value || currentUser.coverPic;
             const bio = document.getElementById('new-bio').value || currentUser.bio;
             const web = document.getElementById('new-web').value || currentUser.website;
-            const res = await fetch(`${API_URL}/update-profile/${currentUser._id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({profilePic: dp, bio, website: web}) });
-            const data = await res.json(); currentUser = data.user;
-            updateProfileUI(); showToast("Profile Updated!");
+            const res = await fetch(`${API_URL}/update-profile/${currentUser._id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({profilePic: dp, coverPic: cover, bio, website: web}) });
+            const data = await res.json(); currentUser = data.user; updateProfileUI(); showToast("Profile Updated!"); document.getElementById('edit-profile-area').style.display='none';
         }
 
         async function createPost() {
             const content = document.getElementById('content').value;
-            if(!content && !base64Image) return showToast("Bhai, kuch toh likh ya photo daal!");
-            showToast("Posting... ⏳");
+            if(!content && !base64Image) return showToast("Kuch likho ya photo daalo!");
+            showToast("Posting...");
             await fetch(`${API_URL}/create-post`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username: currentUser.name, userDp: currentUser.profilePic, content, imageUrl: base64Image }) });
-            document.getElementById('content').value = ''; 
-            base64Image = ""; document.getElementById('preview-img').style.display = 'none';
-            showToast("Posted successfully! 🎉"); loadPosts();
+            document.getElementById('content').value = ''; base64Image = ""; document.getElementById('preview-img').style.display = 'none';
+            showToast("Posted! 🎉"); loadPosts();
         }
 
-        async function likePost(id) { await fetch(`${API_URL}/like/${id}`, { method: 'POST' }); loadPosts(); }
+        async function likePost(id) { await fetch(`${API_URL}/like/${id}`, { method: 'POST' }); showToast("💖 Liked!"); loadPosts(); }
+        async function recordView(id) { await fetch(`${API_URL}/view/${id}`, { method: 'POST' }); }
         
         function savePost(id) {
             if(!savedPostsList.includes(id)) { savedPostsList.push(id); showToast("Post Saved! 🔖"); }
             else { savedPostsList = savedPostsList.filter(pId => pId !== id); showToast("Removed from Saved!"); }
-            localStorage.setItem('savedPosts', JSON.stringify(savedPostsList));
-            if(currentTab === 'saved') loadPosts();
+            localStorage.setItem('savedPosts', JSON.stringify(savedPostsList)); if(currentTab === 'saved') loadPosts();
         }
 
         function toggleMenu(id) { document.getElementById("menu-" + id).classList.toggle("show"); }
         window.onclick = function(e) { if (!e.target.matches('.action-btn')) { document.querySelectorAll(".dropdown-content").forEach(d => d.classList.remove('show')); } }
-
         async function deletePost(id) { if(confirm("Delete post?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); showToast("Deleted! 🗑️"); loadPosts(); } }
-        async function deleteComment(postId, commentId) { if(confirm("Delete comment?")) { await fetch(`${API_URL}/delete-comment/${postId}/${commentId}`, { method: 'DELETE' }); loadPosts(); } }
-
+        
+        // Load Posts Logic
         async function loadPosts() {
             const res = await fetch(`${API_URL}/posts`); let posts = await res.json();
-            
-            // Profile stats update
-            if(currentUser) {
-                const myPostsCount = posts.filter(p => p.username === currentUser.name).length;
-                document.getElementById('post-count').innerText = myPostsCount;
-            }
-
+            if(currentUser) { document.getElementById('post-count').innerText = posts.filter(p => p.username === currentUser.name).length; }
             if(currentTab === 'profile' && currentUser) posts = posts.filter(p => p.username === currentUser.name);
             if(currentTab === 'saved') posts = posts.filter(p => savedPostsList.includes(p._id));
 
             const feed = document.getElementById('feed'); feed.innerHTML = '';
             
-            if(posts.length === 0) feed.innerHTML = `<h4 style="text-align:center; color:gray;">No posts to show here yet! 📭</h4>`;
-
             posts.forEach(p => {
-                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : '';
+                // Auto-View recording simulation
+                setTimeout(() => recordView(p._id), 2000);
+
+                const vipBadge = (p.likes >= 5) ? '✅' : '';
+                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" ondblclick="likePost('${p._id}')">` : '';
                 const dpTag = p.userDp ? p.userDp : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 
+                // Read More Logic
+                let displayContent = formatText(p.content);
+                if (p.content.length > 150) { displayContent = formatText(p.content.substring(0, 150)) + '... <span style="color:gray;cursor:pointer;">Read more</span>'; }
+
                 let menuHtml = '';
                 if(currentUser && p.username === currentUser.name) {
-                    menuHtml = `
-                    <div style="position:relative;">
-                        <button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button>
-                        <div id="menu-${p._id}" class="dropdown-content">
-                            <button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete Post</button>
-                        </div>
-                    </div>`;
+                    menuHtml = `<div style="position:relative;"><button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button><div id="menu-${p._id}" class="dropdown-content"><button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete Post</button></div></div>`;
                 }
 
-                let commentsHtml = p.comments.map(c => `
-                    <div class="comment-item">
-                        <span><b>${c.username}:</b> ${c.text}</span>
-                        ${(currentUser && c.username === currentUser.name) ? `<button onclick="deleteComment('${p._id}', '${c._id}')" style="background:none; color:red; padding:0; font-size:12px;">X</button>` : ''}
-                    </div>`).join('');
-
-                const isSaved = savedPostsList.includes(p._id) ? '🔖 Saved' : '📑 Save';
+                const isSaved = savedPostsList.includes(p._id) ? '🔖' : '📑';
 
                 feed.innerHTML += `
                     <div class="post">
                         <div class="post-header">
-                            <div class="user-info">
-                                <img src="${dpTag}" class="dp-img" style="width:40px;height:40px;">
-                                <div>${p.username} ✅ <div style="font-size:12px; font-weight:normal; color:gray;">${timeAgo(p.createdAt)} • ${p.privacy}</div></div>
-                            </div>
+                            <div class="user-info"><img src="${dpTag}" class="dp-img-small"><div>${p.username} ${vipBadge} <span class="online-dot"></span><div style="font-size:12px; font-weight:normal; color:gray;">${timeAgo(p.createdAt)} • ${p.privacy}</div></div></div>
                             ${menuHtml}
                         </div>
-                        <div class="post-content">${p.content}</div>
+                        <div class="post-content">${displayContent}</div>
                         ${imgTag} 
                         <div class="actions">
-                            <button class="action-btn" onclick="likePost('${p._id}')">👍 ${p.likes || 0}</button>
+                            <div>
+                                <button class="action-btn" onclick="likePost('${p._id}')">💖 ${p.likes || 0}</button>
+                                <button class="action-btn">💬 ${p.comments.length}</button>
+                                <span style="font-size:13px; color:gray; margin-left:10px;">👁️ ${p.views || 0} Views</span>
+                            </div>
                             <button class="action-btn" onclick="savePost('${p._id}')">${isSaved}</button>
                         </div>
-                        <div class="comments-section">${commentsHtml}</div>
                     </div>`;
             });
         }
