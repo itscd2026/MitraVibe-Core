@@ -12,10 +12,11 @@ mongoose.connect(mongoURI).then(() => console.log("✅ DB Connected!"));
 
 const User = mongoose.model('User', { name: String, email: { type: String, unique: true }, password: String });
 
-// Post Model mein 'likes' add kiya
+// Yahan maine 'imageUrl' add kar diya hai
 const Post = mongoose.model('Post', { 
     username: String, 
     content: String, 
+    imageUrl: String, 
     likes: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now } 
 });
@@ -43,7 +44,6 @@ app.get('/posts', async (req, res) => {
     res.json(posts);
 });
 
-// Like API (Naya!)
 app.post('/like/:id', async (req, res) => {
     const post = await Post.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, { new: true });
     res.json(post);
