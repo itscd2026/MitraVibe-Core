@@ -3,55 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitra Vibe 4.0 🚀</title>
+    <title>Mitra Vibe 5.0 🚀</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1877f2">
     <style>
         :root { --bg: #f0f2f5; --card: white; --text: #1c1e21; --primary: #1877f2; --nav: white; }
         body.dark-mode { --bg: #18191a; --card: #242526; --text: #e4e6eb; --nav: #242526; --primary: #2d88ff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; transition: 0.3s; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; transition: 0.3s; }
         .nav { background: var(--nav); color: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; font-weight: bold; font-size: 22px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: var(--bg); color: var(--text); resize: none; }
+        .container { max-width: 600px; margin: auto; padding: 15px; box-sizing: border-box; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; overflow: hidden; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: var(--bg); color: var(--text); resize: none; }
         button { padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .file-upload-btn { background: #e4e6eb; color: black; display: block; text-align: center; margin-bottom: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
         input[type="file"] { display: none; }
         
-        .tabs { display: flex; justify-content: space-around; margin-bottom: 20px; display: none; }
-        .tab-btn { background: transparent; color: var(--text); border-bottom: 3px solid transparent; border-radius: 0; padding: 10px; flex: 1; font-weight:bold; }
-        .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); }
+        /* Bottom Tab Bar for Mobile feel */
+        .bottom-tabs { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; display: none; }
+        .tab-btn { background: transparent; color: gray; border: none; font-size: 20px; padding: 5px 20px; border-radius: 10px; }
+        .tab-btn.active { color: var(--primary); background: #e7f3ff; }
         
-        /* Profile & Cover UI */
-        .cover-photo { width: 100%; height: 150px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
-        .profile-content { position: relative; z-index: 1; margin-top: 90px; text-align: center; }
-        .dp-img-large { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); background: white; }
-        .stats-row { display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-weight: bold; }
-        .stat-box { text-align: center; font-size: 14px; color: gray; }
-        .stat-box span { display: block; font-size: 18px; color: var(--text); }
+        /* Stories UI */
+        .stories-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
+        .story-circle { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); padding: 2px; flex-shrink: 0; }
+        .story-wrapper { text-align: center; font-size: 11px; font-weight: bold; }
         
-        /* Post UI */
+        /* Profile & Post UI */
+        .cover-photo { width: 100%; height: 120px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
+        .profile-content { position: relative; z-index: 1; margin-top: 70px; text-align: center; }
+        .dp-img-large { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); background: white; }
+        
         .post { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .user-info { display: flex; align-items: center; gap: 10px; font-weight: bold; }
         .dp-img-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .online-dot { width: 10px; height: 10px; background-color: #31a24c; border-radius: 50%; display: inline-block; margin-left: 5px; }
-        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 500px; object-fit: cover; cursor: pointer; }
-        .actions { display: flex; gap: 10px; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; justify-content: space-between; }
-        .action-btn { background: transparent; color: var(--text); font-size: 14px; padding: 5px; }
-        .hashtag { color: var(--primary); font-weight: bold; cursor: pointer; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 500px; object-fit: cover; }
         
-        .dropdown-content { display: none; position: absolute; right: 0; background: var(--card); border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10; }
+        .actions { display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px; }
+        .action-btn { background: transparent; color: var(--text); font-size: 14px; padding: 5px; }
+        .reaction-bar { display: flex; gap: 5px; }
+        
+        /* Formats */
+        .hashtag { color: var(--primary); cursor: pointer; }
+        .mention { color: #e91e63; font-weight: bold; cursor: pointer; }
+        .location-tag { font-size: 12px; color: gray; margin-left: 5px; display: block; }
+        .pinned-badge { background: #ffebee; color: #d32f2f; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-bottom: 5px; display: inline-block; }
+        
+        .dropdown-content { display: none; position: absolute; right: 0; background: var(--card); border: 1px solid #ddd; border-radius: 8px; z-index: 10; width: 120px; }
         .dropdown-content button { width: 100%; background: transparent; color: var(--text); text-align: left; }
         .show { display: block; }
         
-        .comments-section { background: var(--bg); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
-        .comment-item { display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; padding: 5px 0; }
-        
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1001; left: 50%; bottom: 30px; transform: translateX(-50%); }
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1001; left: 50%; bottom: 80px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 80px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 80px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
@@ -72,50 +76,64 @@
             <p style="text-align:center;">Naye hain? <button onclick="showSignup()" class="action-btn" style="color:var(--primary)">Signup</button></p>
         </div>
 
-        <div class="tabs" id="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('feed')">🌍 Global</button>
-            <button class="tab-btn" onclick="switchTab('saved')">🔖 Saved</button>
-            <button class="tab-btn" onclick="switchTab('profile')">👤 Profile</button>
-        </div>
+        <div id="main-app" style="display:none;">
+            <div class="stories-container" id="stories-section">
+                <div class="story-wrapper"><img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="story-circle"><br>Your Story</div>
+                <div class="story-wrapper"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="story-circle"><br>Rahul</div>
+                <div class="story-wrapper"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="story-circle"><br>Priya</div>
+                <div class="story-wrapper"><img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100" class="story-circle"><br>Aman</div>
+            </div>
 
-        <div id="create-area" class="card" style="display:none; padding-bottom:10px;">
-            <textarea id="content" placeholder="What's on your mind? Type #tags..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-            <label class="file-upload-btn">📸 Add Photo <input type="file" id="image-upload" accept="image/*"></label>
-            <img id="preview-img" style="width:100%; border-radius:8px; display:none; margin-bottom:10px;">
-            <button onclick="createPost()" style="width:100%;">Post Now</button>
-        </div>
+            <div id="create-area" class="card">
+                <textarea id="content" placeholder="What's on your mind? Use @tags and #hashtags" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                <input type="text" id="post-location" placeholder="📍 Add Location (e.g., Greater Noida)">
+                <label class="file-upload-btn">📸 Select Photo <input type="file" id="image-upload" accept="image/*"></label>
+                <img id="preview-img" style="width:100%; border-radius:8px; display:none; margin-bottom:10px;">
+                <button onclick="createPost()" style="width:100%;">Post Now</button>
+            </div>
 
-        <div id="profile-area" class="card" style="display:none; text-align:center;">
-            <img id="cover-img" class="cover-photo" src="">
-            <div class="profile-content">
-                <img id="my-dp" class="dp-img-large" src="">
-                <h2 style="margin:5px 0;"><span id="display-name"></span> <span class="online-dot"></span></h2>
-                <div id="display-bio" style="color:gray; font-size:14px; margin-bottom:5px;"></div>
-                <a id="display-web" href="#" target="_blank" style="font-size:13px; color:var(--primary); text-decoration:none;"></a>
-                
-                <div class="stats-row">
-                    <div class="stat-box"><span id="post-count">0</span>Posts</div>
-                    <div class="stat-box"><span id="follower-count">0</span>Followers</div>
-                    <div class="stat-box"><span id="following-count">0</span>Following</div>
-                </div>
-                
-                <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
-                    <button onclick="document.getElementById('edit-profile-area').style.display='block'" style="background:#e4e6eb; color:black;">Edit Profile</button>
-                    <button onclick="copyProfileLink()">🔗 Share Profile</button>
+            <div id="profile-area" class="card" style="display:none; text-align:center;">
+                <img id="cover-img" class="cover-photo" src="">
+                <div class="profile-content">
+                    <img id="my-dp" class="dp-img-large" src="">
+                    <h2 style="margin:5px 0;"><span id="display-name"></span> <span id="pro-badge"></span></h2>
+                    <div id="display-bio" style="color:gray; font-size:14px; margin-bottom:5px;"></div>
+                    <a id="display-web" href="#" target="_blank" style="font-size:13px; color:var(--primary); text-decoration:none;"></a>
+                    
+                    <div style="display:flex; justify-content:center; gap:20px; margin-top:10px; font-weight:bold;">
+                        <div style="font-size:14px; color:gray;"><span style="display:block; font-size:18px; color:var(--text);" id="post-count">0</span>Posts</div>
+                        <div style="font-size:14px; color:gray;"><span style="display:block; font-size:18px; color:var(--text);" id="follower-count">0</span>Followers</div>
+                    </div>
+                    
+                    <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                        <button onclick="document.getElementById('edit-profile-area').style.display='block'" style="background:#e4e6eb; color:black;">Edit Profile</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="edit-profile-area" class="card" style="display:none; margin-top:20px;">
-            <h3>Edit Profile Details</h3>
-            <input type="text" id="new-cover" placeholder="Cover Photo URL (Link)">
-            <input type="text" id="new-dp" placeholder="Profile Pic URL (Link)">
-            <input type="text" id="new-bio" placeholder="Your Bio">
-            <input type="text" id="new-web" placeholder="Website / Instagram Link">
-            <button onclick="updateProfile()" style="width:100%;">Save Changes</button>
-        </div>
+            <div id="edit-profile-area" class="card" style="display:none; margin-top:10px;">
+                <input type="text" id="new-dp" placeholder="Profile Pic Link">
+                <input type="text" id="new-cover" placeholder="Cover Photo Link">
+                <input type="text" id="new-bio" placeholder="Your Bio">
+                <button onclick="updateProfile()" style="width:100%;">Save</button>
+            </div>
 
-        <div id="feed"></div>
+            <div id="notif-area" class="card" style="display:none;">
+                <h3>🔔 Notifications</h3>
+                <div style="padding:10px; border-bottom:1px solid #ddd;">❤️ Aman liked your post.</div>
+                <div style="padding:10px; border-bottom:1px solid #ddd;">💬 Priya commented on your photo.</div>
+                <div style="padding:10px;">👤 Rahul started following you.</div>
+            </div>
+
+            <div id="feed"></div>
+        </div>
+    </div>
+
+    <div class="bottom-tabs" id="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('feed')">🌍</button>
+        <button class="tab-btn" onclick="switchTab('saved')">🔖</button>
+        <button class="tab-btn" onclick="switchTab('notif')">🔔</button>
+        <button class="tab-btn" onclick="switchTab('profile')">👤</button>
     </div>
 
     <script>
@@ -127,28 +145,26 @@
 
         function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
         function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-        function copyProfileLink() { navigator.clipboard.writeText(window.location.href); showToast("Profile Link Copied! 🔗"); }
-
+        
         function timeAgo(date) {
-            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60); if (minutes < 60) return minutes + 'm ago';
-            const hours = Math.floor(minutes / 60); if (hours < 24) return hours + 'h ago';
-            const days = Math.floor(hours / 24); return days + 'd ago';
+            const s = Math.floor((new Date() - new Date(date)) / 1000);
+            if (s < 60) return 'Just now';
+            const m = Math.floor(s / 60); if (m < 60) return m + 'm ago';
+            const h = Math.floor(m / 60); if (h < 24) return h + 'h ago';
+            return Math.floor(h / 24) + 'd ago';
         }
 
-        // Hashtag formatter
+        // Feature 4 & 5: Smart Text Formatting (Links, Mentions, Hashtags)
         function formatText(text) {
-            return text.replace(/#(\w+)/g, '<span class="hashtag">#$1</span>');
+            return text
+                .replace(/#(\w+)/g, '<span class="hashtag">#$1</span>')
+                .replace(/@(\w+)/g, '<span class="mention">@$1</span>')
+                .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:var(--primary)">$1</a>');
         }
 
         document.getElementById('image-upload').addEventListener('change', function() {
             const file = this.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) { base64Image = e.target.result; document.getElementById('preview-img').src = base64Image; document.getElementById('preview-img').style.display = 'block'; };
-                reader.readAsDataURL(file);
-            }
+            if(file) { const reader = new FileReader(); reader.onload = function(e) { base64Image = e.target.result; document.getElementById('preview-img').src = base64Image; document.getElementById('preview-img').style.display = 'block'; }; reader.readAsDataURL(file); }
         });
 
         async function login() {
@@ -158,63 +174,74 @@
             if(res.ok) {
                 currentUser = data.user;
                 document.getElementById('auth-area').style.display = 'none';
-                document.getElementById('create-area').style.display = 'block';
+                document.getElementById('main-app').style.display = 'block';
                 document.getElementById('nav-tabs').style.display = 'flex';
-                updateProfileUI(); showToast(`Welcome, ${currentUser.name}! 🟢`); loadPosts();
+                updateProfileUI(); showToast(`Welcome, ${currentUser.name}!`); loadPosts();
             } else { showToast(data.error); }
         }
 
         function updateProfileUI() {
             document.getElementById('display-name').innerText = currentUser.name;
+            document.getElementById('pro-badge').innerText = (currentUser.followers >= 10) ? '⭐' : '';
             document.getElementById('display-bio').innerText = currentUser.bio;
             document.getElementById('my-dp').src = currentUser.profilePic;
-            document.getElementById('cover-img').src = currentUser.coverPic || 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800';
+            document.getElementById('cover-img').src = currentUser.coverPic;
             document.getElementById('follower-count').innerText = currentUser.followers || 0;
-            document.getElementById('following-count').innerText = currentUser.following || 0;
-            if(currentUser.website) { document.getElementById('display-web').innerText = "🔗 " + currentUser.website; document.getElementById('display-web').href = currentUser.website; }
+            if(currentUser.website) { document.getElementById('display-web').innerText = "🔗 Link"; document.getElementById('display-web').href = currentUser.website; }
         }
 
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); event.target.classList.add('active');
-            document.getElementById('profile-area').style.display = (tab === 'profile') ? 'block' : 'none';
+            
             document.getElementById('create-area').style.display = (tab === 'feed') ? 'block' : 'none';
+            document.getElementById('stories-section').style.display = (tab === 'feed') ? 'flex' : 'none';
+            document.getElementById('profile-area').style.display = (tab === 'profile') ? 'block' : 'none';
+            document.getElementById('notif-area').style.display = (tab === 'notif') ? 'block' : 'none';
             document.getElementById('edit-profile-area').style.display = 'none';
-            loadPosts();
+            
+            document.getElementById('feed').style.display = (tab === 'notif') ? 'none' : 'block';
+            if(tab !== 'notif') loadPosts();
         }
 
         async function updateProfile() {
             const dp = document.getElementById('new-dp').value || currentUser.profilePic;
             const cover = document.getElementById('new-cover').value || currentUser.coverPic;
             const bio = document.getElementById('new-bio').value || currentUser.bio;
-            const web = document.getElementById('new-web').value || currentUser.website;
-            const res = await fetch(`${API_URL}/update-profile/${currentUser._id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({profilePic: dp, coverPic: cover, bio, website: web}) });
+            const res = await fetch(`${API_URL}/update-profile/${currentUser._id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({profilePic: dp, coverPic: cover, bio}) });
             const data = await res.json(); currentUser = data.user; updateProfileUI(); showToast("Profile Updated!"); document.getElementById('edit-profile-area').style.display='none';
         }
 
         async function createPost() {
             const content = document.getElementById('content').value;
-            if(!content && !base64Image) return showToast("Kuch likho ya photo daalo!");
+            const loc = document.getElementById('post-location').value;
+            if(!content && !base64Image) return showToast("Write something or add photo!");
             showToast("Posting...");
-            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username: currentUser.name, userDp: currentUser.profilePic, content, imageUrl: base64Image }) });
-            document.getElementById('content').value = ''; base64Image = ""; document.getElementById('preview-img').style.display = 'none';
+            await fetch(`${API_URL}/create-post`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username: currentUser.name, userDp: currentUser.profilePic, content, imageUrl: base64Image, location: loc }) });
+            document.getElementById('content').value = ''; document.getElementById('post-location').value = ''; base64Image = ""; document.getElementById('preview-img').style.display = 'none';
             showToast("Posted! 🎉"); loadPosts();
         }
 
-        async function likePost(id) { await fetch(`${API_URL}/like/${id}`, { method: 'POST' }); showToast("💖 Liked!"); loadPosts(); }
-        async function recordView(id) { await fetch(`${API_URL}/view/${id}`, { method: 'POST' }); }
+        async function reactPost(id, type) { await fetch(`${API_URL}/react/${id}/${type}`, { method: 'POST' }); loadPosts(); }
+        async function followUser(username) { await fetch(`${API_URL}/follow/${username}`, { method: 'POST' }); showToast(`Following ${username}!`); }
+        async function togglePin(id) { await fetch(`${API_URL}/pin/${id}`, { method: 'POST' }); loadPosts(); }
         
         function savePost(id) {
-            if(!savedPostsList.includes(id)) { savedPostsList.push(id); showToast("Post Saved! 🔖"); }
-            else { savedPostsList = savedPostsList.filter(pId => pId !== id); showToast("Removed from Saved!"); }
+            if(!savedPostsList.includes(id)) { savedPostsList.push(id); showToast("Saved! 🔖"); }
+            else { savedPostsList = savedPostsList.filter(pId => pId !== id); showToast("Unsaved!"); }
             localStorage.setItem('savedPosts', JSON.stringify(savedPostsList)); if(currentTab === 'saved') loadPosts();
+        }
+
+        // WhatsApp Share
+        function shareWA(text, url) {
+            let msg = encodeURIComponent(`${text}\n\nShared from Mitra Vibe: ${window.location.href}`);
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
         }
 
         function toggleMenu(id) { document.getElementById("menu-" + id).classList.toggle("show"); }
         window.onclick = function(e) { if (!e.target.matches('.action-btn')) { document.querySelectorAll(".dropdown-content").forEach(d => d.classList.remove('show')); } }
-        async function deletePost(id) { if(confirm("Delete post?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); showToast("Deleted! 🗑️"); loadPosts(); } }
+        async function deletePost(id) { if(confirm("Delete?")) { await fetch(`${API_URL}/delete-post/${id}`, { method: 'DELETE' }); loadPosts(); } }
         
-        // Load Posts Logic
         async function loadPosts() {
             const res = await fetch(`${API_URL}/posts`); let posts = await res.json();
             if(currentUser) { document.getElementById('post-count').innerText = posts.filter(p => p.username === currentUser.name).length; }
@@ -224,39 +251,48 @@
             const feed = document.getElementById('feed'); feed.innerHTML = '';
             
             posts.forEach(p => {
-                // Auto-View recording simulation
-                setTimeout(() => recordView(p._id), 2000);
-
-                const vipBadge = (p.likes >= 5) ? '✅' : '';
-                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" ondblclick="likePost('${p._id}')">` : '';
+                const imgTag = p.imageUrl ? `<img src="${p.imageUrl}" class="post-img" ondblclick="reactPost('${p._id}', 'love')">` : '';
                 const dpTag = p.userDp ? p.userDp : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                let locTag = p.location ? `<span class="location-tag">📍 ${p.location}</span>` : '';
+                let pinBadge = p.isPinned ? `<div class="pinned-badge">📌 Pinned Post</div>` : '';
                 
-                // Read More Logic
-                let displayContent = formatText(p.content);
-                if (p.content.length > 150) { displayContent = formatText(p.content.substring(0, 150)) + '... <span style="color:gray;cursor:pointer;">Read more</span>'; }
+                let followBtn = (currentUser && p.username !== currentUser.name) ? `<button class="action-btn" style="color:var(--primary); font-size:12px;" onclick="followUser('${p.username}')">Follow</button>` : '';
 
                 let menuHtml = '';
                 if(currentUser && p.username === currentUser.name) {
-                    menuHtml = `<div style="position:relative;"><button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button><div id="menu-${p._id}" class="dropdown-content"><button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete Post</button></div></div>`;
+                    menuHtml = `<div style="position:relative;"><button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button>
+                    <div id="menu-${p._id}" class="dropdown-content">
+                        <button onclick="togglePin('${p._id}')">📌 Pin Post</button>
+                        <button onclick="deletePost('${p._id}')" style="color:red;">🗑️ Delete</button>
+                    </div></div>`;
+                } else {
+                    menuHtml = `<div style="position:relative;"><button onclick="toggleMenu('${p._id}')" class="action-btn">⋮</button>
+                    <div id="menu-${p._id}" class="dropdown-content"><button style="color:red;">🛡️ Report</button></div></div>`;
                 }
-
-                const isSaved = savedPostsList.includes(p._id) ? '🔖' : '📑';
 
                 feed.innerHTML += `
                     <div class="post">
+                        ${pinBadge}
                         <div class="post-header">
-                            <div class="user-info"><img src="${dpTag}" class="dp-img-small"><div>${p.username} ${vipBadge} <span class="online-dot"></span><div style="font-size:12px; font-weight:normal; color:gray;">${timeAgo(p.createdAt)} • ${p.privacy}</div></div></div>
+                            <div class="user-info">
+                                <img src="${dpTag}" style="width:40px;height:40px;border-radius:50%;">
+                                <div>${p.username} ${followBtn} <div style="font-size:12px; font-weight:normal; color:gray;">${timeAgo(p.createdAt)}</div></div>
+                            </div>
                             ${menuHtml}
                         </div>
-                        <div class="post-content">${displayContent}</div>
+                        ${locTag}
+                        <div style="margin:10px 0;">${formatText(p.content)}</div>
                         ${imgTag} 
                         <div class="actions">
-                            <div>
-                                <button class="action-btn" onclick="likePost('${p._id}')">💖 ${p.likes || 0}</button>
-                                <button class="action-btn">💬 ${p.comments.length}</button>
-                                <span style="font-size:13px; color:gray; margin-left:10px;">👁️ ${p.views || 0} Views</span>
+                            <div class="reaction-bar">
+                                <button class="action-btn" onclick="reactPost('${p._id}', 'like')">👍 ${p.reactions?.like || 0}</button>
+                                <button class="action-btn" onclick="reactPost('${p._id}', 'love')">❤️ ${p.reactions?.love || 0}</button>
+                                <button class="action-btn" onclick="reactPost('${p._id}', 'haha')">😂 ${p.reactions?.haha || 0}</button>
                             </div>
-                            <button class="action-btn" onclick="savePost('${p._id}')">${isSaved}</button>
+                            <div>
+                                <button class="action-btn" onclick="savePost('${p._id}')">${savedPostsList.includes(p._id) ? '🔖' : '📑'}</button>
+                                <button class="action-btn" onclick="shareWA('${p.content.substring(0,50)}...', '${p.imageUrl}')">📱 Share</button>
+                            </div>
                         </div>
                     </div>`;
             });
