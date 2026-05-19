@@ -12,19 +12,21 @@ mongoose.connect(mongoURI).then(() => console.log("✅ DB Connected!"));
 
 const User = mongoose.model('User', { name: String, email: { type: String, unique: true }, password: String });
 
-// Yahan maine 'imageUrl' add kar diya hai
+// Post model mein 'comments' ki list add ki
 const Post = mongoose.model('Post', { 
     username: String, 
     content: String, 
     imageUrl: String, 
+    privacy: { type: String, default: 'Public' }, 
     likes: { type: Number, default: 0 },
+    comments: [{ username: String, text: String, createdAt: { type: Date, default: Date.now } }],
     createdAt: { type: Date, default: Date.now } 
 });
 
 app.get('/', (req, res) => res.send('Mitra Vibe API Running!'));
 
 app.post('/signup', async (req, res) => {
-    try { const newUser = new User(req.body); await newUser.save(); res.status(201).json({ message: "Welcome to the Tribe! 🎉" }); }
+    try { const newUser = new User(req.body); await newUser.save(); res.status(201).json({ message: "Welcome! 🎉" }); }
     catch (err) { res.status(400).json({ error: "Email exists!" }); }
 });
 
@@ -47,6 +49,31 @@ app.get('/posts', async (req, res) => {
 app.post('/like/:id', async (req, res) => {
     const post = await Post.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, { new: true });
     res.json(post);
+});
+
+app.delete('/delete-post/:id', async (req, res) => {
+    await Post.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted!" });
+});
+
+app.put('/edit-post/:id', async (req, res) => {
+    await Post.findByIdAndUpdate(req.params.id, { content: req.body.content });
+    res.json({ message: "Edited!" });
+});
+
+app.put('/privacy-post/:id', async (req, res) => {
+    const post = await Post.findById(req.params.id);
+    const newPrivacy = post.privacy === 'Public' ? 'Private' : 'Public';
+    await Post.findByIdAndUpdate(req.params.id, { privacy: newPrivacy });
+    res.json({ message: "Privacy Changed!" });
+});
+
+// NAYA: Comment Add karne ka API
+app.post('/comment/:id', async (req, res) => {
+    await Post.findByIdAndUpdate(req.params.id, { 
+        $push: { comments: { username: req.body.username, text: req.body.text } } 
+    });
+    res.json({ message: "Commented!" });
 });
 
 const PORT = process.env.PORT || 3000;
